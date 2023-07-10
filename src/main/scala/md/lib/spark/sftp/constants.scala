@@ -1,4 +1,4 @@
-package com.springml.spark.sftp
+package md.lib.spark.sftp
 
 /**
   * Created by bagopalan on 9/16/18.

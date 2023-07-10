@@ -1,4 +1,4 @@
-package com.springml.spark.sftp
+package md.lib.spark.sftp
 
 import org.apache.spark.sql.SparkSession
 import org.scalatest.funsuite.AnyFunSuite

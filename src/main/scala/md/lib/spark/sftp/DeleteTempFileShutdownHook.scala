@@ -1,4 +1,4 @@
-package com.springml.spark.sftp
+package md.lib.spark.sftp
 
 import org.apache.commons.io.FileUtils
 import java.io.File

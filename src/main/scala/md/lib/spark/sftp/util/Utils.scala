@@ -1,4 +1,4 @@
-package com.springml.spark.sftp.util
+package md.lib.spark.sftp.util
 
 import org.apache.spark.sql.DataFrameWriter
 

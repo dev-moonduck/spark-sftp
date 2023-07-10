@@ -1,4 +1,4 @@
-package com.springml.spark.sftp
+package md.lib.spark.sftp
 
 import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
