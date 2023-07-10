@@ -17,10 +17,7 @@ package md.lib.spark.sftp
 
 import java.io.File
 import java.util.UUID
-
-import com.springml.sftp.client.SFTPClient
 import md.lib.spark.sftp.util.Utils.ImplicitDataFrameWriter
-
 import org.apache.commons.io.FilenameUtils
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.Logger
@@ -28,6 +25,7 @@ import org.apache.spark.sql.sources.{BaseRelation, CreatableRelationProvider, Re
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 import com.databricks.spark.xml._
+import net.schmizz.sshj.sftp.SFTPClient
 
 /**
  * Datasource to construct dataframe from a sftp url
@@ -61,7 +59,6 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
     val escape = parameters.getOrElse("escape", "\\")
     val multiLine = parameters.getOrElse("multiLine", "false")
     val createDF = parameters.getOrElse("createDF", "true")
-    val copyLatest = parameters.getOrElse("copyLatest", "false")
     val tempFolder = parameters.getOrElse("tempLocation", System.getProperty("java.io.tmpdir"))
     val hdfsTemp = parameters.getOrElse("hdfsTempLocation", tempFolder)
     val cryptoKey = parameters.getOrElse("cryptoKey", null)
@@ -81,7 +78,7 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
 
     val sftpClient = getSFTPClient(username, password, pemFileLocation, pemPassphrase, host, port,
       cryptoKey, cryptoAlgorithm)
-    val copiedFileLocation = copy(sftpClient, path, tempFolder, copyLatest.toBoolean)
+    val copiedFileLocation = copy(sftpClient, path, tempFolder)
     val fileLocation = copyToHdfs(sqlContext, copiedFileLocation, hdfsTemp)
 
     if (!createDF.toBoolean) {
@@ -164,7 +161,7 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
 
   private def upload(source: String, target: String, sftpClient: SFTPClient) {
     logger.info("Copying " + source + " to " + target)
-    sftpClient.copyToFTP(source, target)
+    sftpClient.put(source, target)
   }
 
   private def getSFTPClient(
@@ -206,18 +203,13 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
     }
   }
 
-  private def copy(sftpClient: SFTPClient, source: String,
-      tempFolder: String, latest: Boolean): String = {
+  private def copy(sftpClient: SFTPClient, source: String, tempFolder: String): String = {
     var copiedFilePath: String = null
     try {
       val target = tempFolder + File.separator + FilenameUtils.getName(source)
       copiedFilePath = target
-      if (latest) {
-        copiedFilePath = sftpClient.copyLatest(source, tempFolder)
-      } else {
-        logger.info("Copying " + source + " to " + target)
-        copiedFilePath = sftpClient.copy(source, target)
-      }
+      logger.info("Copying " + source + " to " + target)
+      sftpClient.get(source, target)
 
       copiedFilePath
     } finally {

@@ -4,10 +4,6 @@ organization := "md.lib"
 
 scalaVersion := "2.12.17"
 
-//sparkVersion := "3.4.0"
-
-//spName := "md-lib/spark-sftp"
-
 version := "0.1.0"
 
 val v = new {
@@ -15,36 +11,25 @@ val v = new {
   val scalaTest = "3.2.16"
   val spark = "3.4.0"
   val sparkXml = "0.16.0"
+  val sshj = "0.32.0"
 }
 
 // Dependent libraries
 libraryDependencies ++= Seq(
-  "com.springml" % "sftp.client" % "1.0.3",
-//  "org.mockito" % "mockito-core" % "2.0.31-beta",
+//  "com.springml" % "sftp.client" % "1.0.3",
+  "com.hierynomus" % "sshj" % v.sshj,
+  "org.apache.spark" %% "spark-sql" % v.spark % Provided,
+  "org.apache.spark" %% "spark-avro" % v.spark % Provided,
   "com.databricks" %% "spark-xml" % v.sparkXml
 )
 
-// used spark components
-//sparkComponents += "sql"
-
-// Repositories
-//resolvers += "Spark Package Main Repo" at "https://dl.bintray.com/spark-packages/maven"
-
-// Spark packages
-//spDependencies += "com.databricks/spark-avro_2.11:3.2.0"
-
 // Test dependencies
-libraryDependencies += "org.scalatest" %% "scalatest" % v.scalaTest % "test"
-//libraryDependencies += "org.apache.avro" % "avro-mapred" % "1.7.7" % "test" exclude("org.mortbay.jetty", "servlet-api")
-libraryDependencies +=  "org.apache.spark" %% "spark-hive" % v.spark % "test"
-
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-sql" % v.spark % Provided,
-  "org.apache.spark" %% "spark-avro" % v.spark % Provided
-)
+  "org.scalatest" %% "scalatest" % v.scalaTest,
+  "org.apache.spark" %% "spark-hive" % v.spark
+).map(_ % Test)
 
-//spIgnoreProvided := true
-// licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0"))
+licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0"))
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
