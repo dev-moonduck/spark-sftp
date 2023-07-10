@@ -39,7 +39,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % v.scalaTest % "test"
 libraryDependencies +=  "org.apache.spark" %% "spark-hive" % v.spark % "test"
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-sql" % v.spark % Provided
+  "org.apache.spark" %% "spark-sql" % v.spark % Provided,
+  "org.apache.spark" %% "spark-avro" % v.spark % Provided
 )
 
 //spIgnoreProvided := true
