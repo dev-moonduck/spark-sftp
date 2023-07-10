@@ -14,13 +14,14 @@ val v = new {
   val sftpClient = "1.0.3"
   val scalaTest = "3.2.16"
   val spark = "3.4.0"
+  val sparkXml = "0.16.0"
 }
 
 // Dependent libraries
 libraryDependencies ++= Seq(
-  "com.springml" % "sftp.client" % "1.0.3"
+  "com.springml" % "sftp.client" % "1.0.3",
 //  "org.mockito" % "mockito-core" % "2.0.31-beta",
-//  "com.databricks" % "spark-xml_2.11" % "0.4.1"
+  "com.databricks" %% "spark-xml" % v.sparkXml
 )
 
 // used spark components
@@ -36,6 +37,10 @@ libraryDependencies ++= Seq(
 libraryDependencies += "org.scalatest" %% "scalatest" % v.scalaTest % "test"
 //libraryDependencies += "org.apache.avro" % "avro-mapred" % "1.7.7" % "test" exclude("org.mortbay.jetty", "servlet-api")
 libraryDependencies +=  "org.apache.spark" %% "spark-hive" % v.spark % "test"
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-sql" % v.spark % Provided
+)
 
 //spIgnoreProvided := true
 // licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0"))

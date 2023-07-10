@@ -27,6 +27,7 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.sources.{BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
+import com.databricks.spark.xml._
 
 /**
  * Datasource to construct dataframe from a sftp url
@@ -243,9 +244,9 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
 
     fileType match {
 
-      case "xml" =>  df.coalesce(1).write.format(constants.xmlClass)
+      case "xml" =>  df.coalesce(1).write
                     .option(constants.xmlRowTag, rowTag)
-                    .option(constants.xmlRootTag, rootTag).save(hdfsTempLocation)
+                    .option(constants.xmlRootTag, rootTag).xml(hdfsTempLocation)
       case "csv" => df.coalesce(1).
                     write.
                     option("header", header).
@@ -256,7 +257,7 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
                     optionNoNull("codec", Option(codec)).
                     csv(hdfsTempLocation)
       case "txt" => df.coalesce(1).write.text(hdfsTempLocation)
-      case "avro" => df.coalesce(1).write.format("com.databricks.spark.avro").save(hdfsTempLocation)
+      case "avro" => df.coalesce(1).write.format("avro").save(hdfsTempLocation)
       case _ => df.coalesce(1).write.format(fileType).save(hdfsTempLocation)
     }
 
